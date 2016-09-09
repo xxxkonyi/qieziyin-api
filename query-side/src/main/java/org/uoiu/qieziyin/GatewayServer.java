@@ -23,6 +23,8 @@ public class GatewayServer extends NubesServer {
 
   @Override
   public void start(Future<Void> future) {
+    options.setLogActivity(true);
+
     JsonObject mongoConfig = ((JsonObject) vertx.sharedData().getLocalMap(Constants.CONFIG_NAME).get("config"))
       .getJsonObject("mongo");
     String mongodbConnection = System.getenv(Constants.ENV_MONGODB_CONNECTION);

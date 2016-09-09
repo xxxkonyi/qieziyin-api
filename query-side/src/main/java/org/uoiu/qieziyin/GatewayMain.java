@@ -8,6 +8,8 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.logging.SLF4JLogDelegateFactory;
 import org.uoiu.qieziyin.common.Constants;
 
+import java.util.Objects;
+
 public class GatewayMain {
 
   static {
@@ -20,11 +22,21 @@ public class GatewayMain {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
+    JsonObject config = vertx.fileSystem().readFileBlocking("config.json").toJsonObject();
+
     DeploymentOptions options = new DeploymentOptions();
     options.setInstances(NB_INSTANCES);
 
-    JsonObject config = vertx.fileSystem().readFileBlocking("config.json").toJsonObject();
     JsonObject serverConfig = config.getJsonObject("server");
+    String host = System.getenv(Constants.ENV_APP_HOST);
+    if (Objects.nonNull(host)) {
+      serverConfig.put("host", host);
+    }
+    String port = System.getenv(Constants.ENV_APP_PORT);
+    if (Objects.nonNull(port)) {
+      serverConfig.put("port", port);
+    }
+    log.info("server config:{}", serverConfig);
     options.setConfig(serverConfig);
 
     vertx.sharedData().getLocalMap(Constants.CONFIG_NAME).put("config", config);
