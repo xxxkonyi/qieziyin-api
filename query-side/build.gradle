@@ -1,0 +1,33 @@
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+dependencies {
+    compile "io.vertx:vertx-core:${vertxVersion}"
+    compile "io.vertx:vertx-web:${vertxVersion}"
+    compile "io.vertx:vertx-mongo-client:${vertxVersion}"
+//    compile 'io.netty:netty-tcnative-boringssl-static:1.1.33.Fork17'
+    compile "io.vertx:vertx-auth-mongo:${vertxVersion}"
+    compile("com.github.aesteve:nubes:1.2") {
+        exclude group: 'io.vertx', module: 'vertx-auth-shiro'
+        exclude group: 'io.vertx', module: 'vertx-auth-jwt'
+        exclude group: 'io.vertx', module: 'vertx-auth-jdbc'
+        exclude group: 'io.vertx', module: 'vertx-jdbc-client'
+        exclude group: 'io.vertx', module: 'vertx-web-templ-handlebars'
+        exclude group: 'io.vertx', module: 'vertx-web-templ-mvel'
+        exclude group: 'io.vertx', module: 'vertx-web-templ-jade'
+        exclude group: 'io.vertx', module: 'vertx-web-templ-thymeleaf'
+    }
+}
+
+mainClassName = 'org.uoiu.qieziyin.GatewayMain'
+
+shadowJar {
+    manifest {
+        attributes 'Main-Verticle': 'org.uoiu.qieziyin.Server'
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }
+}

@@ -1,0 +1,36 @@
+subprojects {
+    task wrapper(type: Wrapper) {
+        gradleVersion = '2.14.1'
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'https://oss.sonatype.org/content/repositories/iovertx-2993'
+        }
+    }
+
+    group = 'uoiu'
+    version = '0.0.1'
+    ext {
+        vertxVersion = "3.3.2"
+    }
+
+    dependencies {
+        compile 'org.slf4j:slf4j-simple:1.7.12'
+//        compile 'joda-time:joda-time:2.9.4'
+    }
+
+}

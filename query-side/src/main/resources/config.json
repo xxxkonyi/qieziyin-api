@@ -1,0 +1,17 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8000,
+    "src-package": "org.uoiu.qieziyin",
+    "display-errors": true,
+    "throttling": {
+      "time-frame": 10,
+      "time-unit": "SECONDS",
+      "count": 2
+    }
+  },
+  "mongo": {
+    "db_name": "qieziyin",
+    "connection_string": "mongodb://localhost:27017"
+  }
+}
