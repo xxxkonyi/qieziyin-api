@@ -31,6 +31,10 @@ public class GatewayMain {
 
     vertx.deployVerticle(GatewayServer.class.getName(), options,
       result -> {
+        if (result.failed()) {
+          log.error(result.cause());
+          return;
+        }
         log.info("deploy : {}", result.result());
         log.info("Listening at http://{}:{}", serverConfig.getString("host"), serverConfig.getInteger("port"));
       }
