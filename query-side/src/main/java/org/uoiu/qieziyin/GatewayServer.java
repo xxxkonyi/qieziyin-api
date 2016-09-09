@@ -3,6 +3,8 @@ package org.uoiu.qieziyin;
 import com.github.aesteve.vertx.nubes.NubesServer;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
@@ -14,6 +16,7 @@ import org.uoiu.qieziyin.services.UserService;
 import java.util.Objects;
 
 public class GatewayServer extends NubesServer {
+  private static final Logger log = LoggerFactory.getLogger(GatewayMain.class);
 
   protected MongoClient mongoService;
   protected MongoAuth authProvider;
@@ -30,6 +33,7 @@ public class GatewayServer extends NubesServer {
     if (Objects.nonNull(mongodbName)) {
       mongoConfig.put("db_name", mongodbName);
     }
+    log.info("mongo config:{}", mongoConfig);
     mongoService = MongoClient.createShared(vertx, mongoConfig);
     nubes.registerService(Constants.MONGO_SERVICE_NAME, mongoService);
 
