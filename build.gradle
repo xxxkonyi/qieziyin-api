@@ -24,9 +24,6 @@ subprojects {
 
     group = 'uoiu'
     version = '0.0.1'
-    ext {
-        vertxVersion = "3.3.2"
-    }
 
     dependencies {
         compile 'org.slf4j:slf4j-simple:1.7.12'
