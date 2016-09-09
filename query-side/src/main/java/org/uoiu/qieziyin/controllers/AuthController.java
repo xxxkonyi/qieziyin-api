@@ -20,9 +20,9 @@ import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import org.uoiu.qieziyin.services.AccessTokenService;
-import org.uoiu.qieziyin.services.Constants;
-import schemas.ProfileSchemaType;
-import schemas.UserSchemaType;
+import org.uoiu.qieziyin.common.Constants;
+import org.uoiu.qieziyin.schemas.ProfileSchemaType;
+import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 import java.util.Objects;
 

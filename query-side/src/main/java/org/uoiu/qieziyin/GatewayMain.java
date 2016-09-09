@@ -6,7 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.logging.SLF4JLogDelegateFactory;
-import org.uoiu.qieziyin.services.Constants;
+import org.uoiu.qieziyin.common.Constants;
 
 public class GatewayMain {
 

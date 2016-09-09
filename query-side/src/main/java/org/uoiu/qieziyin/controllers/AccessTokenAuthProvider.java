@@ -10,8 +10,8 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.auth.mongo.impl.MongoAuthImpl;
 import io.vertx.ext.mongo.MongoClient;
-import schemas.AccessTokenSchemaType;
-import schemas.UserSchemaType;
+import org.uoiu.qieziyin.schemas.AccessTokenSchemaType;
+import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 import java.text.MessageFormat;
 import java.util.Objects;

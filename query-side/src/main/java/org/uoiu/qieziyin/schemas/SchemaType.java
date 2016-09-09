@@ -1,4 +1,4 @@
-package schemas;
+package org.uoiu.qieziyin.schemas;
 
 abstract class SchemaType {
 

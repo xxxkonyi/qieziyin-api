@@ -9,7 +9,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
-import schemas.AccessTokenSchemaType;
+import org.uoiu.qieziyin.schemas.AccessTokenSchemaType;
 
 import java.time.Instant;
 

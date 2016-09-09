@@ -5,11 +5,13 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
+import org.uoiu.qieziyin.common.Constants;
 import org.uoiu.qieziyin.controllers.AccessTokenAuthProvider;
 import org.uoiu.qieziyin.services.AccessTokenService;
 import org.uoiu.qieziyin.services.CollectionService;
-import org.uoiu.qieziyin.services.Constants;
 import org.uoiu.qieziyin.services.UserService;
+
+import java.util.Objects;
 
 public class GatewayServer extends NubesServer {
 
@@ -20,6 +22,14 @@ public class GatewayServer extends NubesServer {
   public void start(Future<Void> future) {
     JsonObject mongoConfig = ((JsonObject) vertx.sharedData().getLocalMap(Constants.CONFIG_NAME).get("config"))
       .getJsonObject("mongo");
+    String mongodbConnection = System.getenv(Constants.ENV_MONGODB_CONNECTION);
+    if (Objects.nonNull(mongodbConnection)) {
+      mongoConfig.put("connection_string", mongodbConnection);
+    }
+    String mongodbName = System.getenv(Constants.ENV_MONGODB_DB_NAME);
+    if (Objects.nonNull(mongodbName)) {
+      mongoConfig.put("db_name", mongodbName);
+    }
     mongoService = MongoClient.createShared(vertx, mongoConfig);
     nubes.registerService(Constants.MONGO_SERVICE_NAME, mongoService);
 

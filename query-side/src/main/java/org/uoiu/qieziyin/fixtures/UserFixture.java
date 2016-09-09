@@ -13,10 +13,10 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
-import org.uoiu.qieziyin.services.Constants;
+import org.uoiu.qieziyin.common.Constants;
 import org.uoiu.qieziyin.services.UserService;
-import schemas.ProfileSchemaType;
-import schemas.UserSchemaType;
+import org.uoiu.qieziyin.schemas.ProfileSchemaType;
+import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 import java.util.List;
 

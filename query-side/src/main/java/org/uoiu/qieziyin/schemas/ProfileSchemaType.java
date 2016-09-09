@@ -1,4 +1,4 @@
-package schemas;
+package org.uoiu.qieziyin.schemas;
 
 import io.vertx.ext.auth.mongo.MongoAuth;
 

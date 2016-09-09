@@ -16,8 +16,8 @@ import io.vertx.ext.auth.mongo.impl.DefaultHashStrategy;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.controllers.AccessTokenUser;
-import schemas.ProfileSchemaType;
-import schemas.UserSchemaType;
+import org.uoiu.qieziyin.schemas.ProfileSchemaType;
+import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 public class UserService implements com.github.aesteve.vertx.nubes.services.Service {
   private static final Logger log = LoggerFactory.getLogger(UserService.class);
