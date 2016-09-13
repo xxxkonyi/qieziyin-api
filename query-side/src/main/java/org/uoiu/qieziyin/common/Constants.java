@@ -14,6 +14,7 @@ public abstract class Constants {
 
   public static final String MONGO_SERVICE_NAME = "mongoService";
   public static final String AUTH_PROVIDER_SERVICE_NAME = "authProvider";
+  public static final String JWT_AUTH_SERVICE_NAME = "jwtAuth";
 
   public class Role {
     public static final String USER = "USER";

@@ -20,7 +20,7 @@ import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 import java.util.List;
 
-public class UserFixture extends Fixture {
+public class UserFixture implements Fixture {
   private static final Logger log = LoggerFactory.getLogger(UserFixture.class);
 
   @Service(Constants.MONGO_SERVICE_NAME)

@@ -1,7 +1,6 @@
 package org.uoiu.qieziyin.services;
 
 import com.github.aesteve.vertx.nubes.annotations.services.Consumer;
-import org.uoiu.qieziyin.events.UserEventType;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -13,9 +12,10 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.auth.mongo.HashSaltStyle;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.auth.mongo.impl.DefaultHashStrategy;
+import io.vertx.ext.auth.mongo.impl.MongoUser;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
-import org.uoiu.qieziyin.controllers.AccessTokenUser;
+import org.uoiu.qieziyin.events.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
 
@@ -97,7 +97,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .put(UserSchemaType.permissions, payload.getJsonArray(UserSchemaType.permissions))
       .put(UserSchemaType._id, userId);
 
-    AccessTokenUser user = new AccessTokenUser(principal, authProvider);
+    MongoUser user = new MongoUser(principal, authProvider);
 
     if (authProvider.getHashStrategy().getSaltStyle() == HashSaltStyle.COLUMN) {
       principal.put(UserSchemaType.salt, DefaultHashStrategy.generateSalt());

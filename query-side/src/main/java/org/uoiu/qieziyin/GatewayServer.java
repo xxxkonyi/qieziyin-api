@@ -5,11 +5,11 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.mongo.MongoAuth;
+import io.vertx.ext.auth.mongo.impl.MongoAuthImpl;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.controllers.AccessTokenAuthProvider;
-import org.uoiu.qieziyin.services.AccessTokenService;
 import org.uoiu.qieziyin.services.CollectionService;
 import org.uoiu.qieziyin.services.UserService;
 
@@ -40,10 +40,17 @@ public class GatewayServer extends NubesServer {
     nubes.registerService(Constants.MONGO_SERVICE_NAME, mongoService);
 
     JsonObject authProperties = new JsonObject();
-    authProvider = new AccessTokenAuthProvider(mongoService, authProperties, authProvider);
+    authProvider = new MongoAuthImpl(mongoService, authProperties);
     nubes.registerService(Constants.AUTH_PROVIDER_SERVICE_NAME, authProvider);
 
-    nubes.setAuthProvider(authProvider);
+
+    JsonObject config = new JsonObject().put("keyStore", new JsonObject()
+      .put("path", "keystore.jceks")
+      .put("type", "jceks")
+      .put("password", "secret"));
+    JWTAuth jwtAuth = JWTAuth.create(vertx, config);
+    nubes.registerService(Constants.JWT_AUTH_SERVICE_NAME, jwtAuth);
+    nubes.setAuthProvider(jwtAuth);
 
     registerService();
 
@@ -52,7 +59,6 @@ public class GatewayServer extends NubesServer {
 
   private void registerService() {
     nubes.registerService(UserService.SERVICE_NAME, new UserService(mongoService, authProvider));
-    nubes.registerService(AccessTokenService.SERVICE_NAME, new AccessTokenService(mongoService));
     nubes.registerService(CollectionService.SERVICE_NAME, new CollectionService());
   }
 

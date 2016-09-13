@@ -8,7 +8,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.uoiu.qieziyin.services.CollectionService;
 
-public class CollectionFixture extends Fixture {
+public class CollectionFixture implements Fixture {
   private static final Logger log = LoggerFactory.getLogger(CollectionFixture.class);
 
   @Service(CollectionService.SERVICE_NAME)
