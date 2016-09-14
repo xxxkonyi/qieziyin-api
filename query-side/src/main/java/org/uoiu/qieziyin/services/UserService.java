@@ -51,7 +51,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
   }
 
   @Consumer(UserEventType.USER_CREATED)
-  public void saveUser(Message<JsonObject> eventMessage) {
+  public void createUser(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
     String userId = ObjectId.get().toHexString();
@@ -77,7 +77,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
         if (result.succeeded()) {
           log.debug("over succeeded");
         } else {
-          log.debug("over failed:{}", result.cause().getMessage());
+          log.error("over failed:{}", result.cause().getMessage());
         }
       })
     ;

@@ -119,8 +119,10 @@ public class AuthController {
 
           payload.set(result.result());
           context.next();
+        } else {
+          context.fail(result.cause());
         }
       });
-  }
 
+  }
 }

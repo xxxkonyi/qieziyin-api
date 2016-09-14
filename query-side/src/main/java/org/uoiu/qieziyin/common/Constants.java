@@ -1,8 +1,11 @@
 package org.uoiu.qieziyin.common;
 
+import io.vertx.core.json.JsonObject;
+
 public abstract class Constants {
 
   public static final String EMPTY_STRING = "";
+  public static final JsonObject EMPTY_JSON_OBJECT = new JsonObject();
 
   public static final String CONFIG_NAME = "app-config";
 

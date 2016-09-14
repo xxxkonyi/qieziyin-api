@@ -3,20 +3,20 @@ package org.uoiu.qieziyin.fixtures;
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.fixtures.Fixture;
 import com.google.common.collect.Lists;
-import org.uoiu.qieziyin.events.UserEventType;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.services.UserService;
+import org.uoiu.qieziyin.events.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
+import org.uoiu.qieziyin.services.UserService;
 
 import java.util.List;
 
@@ -27,8 +27,6 @@ public class UserFixture implements Fixture {
   private MongoClient mongoService;
   @Service(UserService.SERVICE_NAME)
   private UserService userService;
-  @Service(Constants.AUTH_PROVIDER_SERVICE_NAME)
-  private MongoAuth authProvider;
 
   private Vertx vertx;
 
@@ -58,18 +56,16 @@ public class UserFixture implements Fixture {
 
   private List<Future<Void>> initTestUsers() {
     log.info("initTestUsers");
-    mongoService.dropCollection(UserSchemaType.COLLECTION_NAME, handler -> {
-
-    });
-    mongoService.dropCollection(ProfileSchemaType.COLLECTION_NAME, handler -> {
-
-    });
+//    mongoService.dropCollection(UserSchemaType.COLLECTION_NAME, handler -> {
+//    });
+//    mongoService.dropCollection(ProfileSchemaType.COLLECTION_NAME, handler -> {
+//    });
 
     List<JsonObject> users = createUserList();
     List<Future<Void>> futures = Lists.newArrayListWithCapacity(users.size());
 
     for (int i = 0; i < users.size(); i++) {
-      futures.add(initOneUser(users.get(i)));
+      futures.add(initUser(users.get(i)));
     }
 
     return futures;
@@ -112,21 +108,18 @@ public class UserFixture implements Fixture {
     return users;
   }
 
-  private Future initOneUser(JsonObject user) {
+  private Future initUser(JsonObject user) {
     String username = user.getString(UserSchemaType.username);
 
-    Future<Void> future = Future.future();
-    mongoService.findOne(authProvider.getCollectionName(),
+    Future<Message<String>> future = Future.future();
+    mongoService.findOne(UserSchemaType.COLLECTION_NAME,
       new JsonObject().put(UserSchemaType.username, username),
-      new JsonObject().put("username", Constants.EMPTY_STRING),
+      new JsonObject().put(UserSchemaType.username, Constants.EMPTY_STRING),
       result -> {
         if (result.succeeded()) {
           if (result.result() == null) {
-            vertx.eventBus().send(UserEventType.USER_CREATED, user, handler -> {
-              future.complete();
-            });
+            vertx.eventBus().send(UserEventType.USER_CREATED, user, future.completer());
           } else {
-            log.info("user existed: " + username);
             future.complete();
           }
         } else {
