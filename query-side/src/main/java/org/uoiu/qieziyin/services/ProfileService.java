@@ -21,12 +21,10 @@ public class ProfileService implements com.github.aesteve.vertx.nubes.services.S
   public static final String SERVICE_NAME = "profileService";
 
   private MongoClient mongoService;
-  private MongoAuth authProvider;
   private Vertx vertx;
 
-  public ProfileService(MongoClient mongoService, MongoAuth authProvider) {
+  public ProfileService(MongoClient mongoService) {
     this.mongoService = mongoService;
-    this.authProvider = authProvider;
   }
 
   @Override

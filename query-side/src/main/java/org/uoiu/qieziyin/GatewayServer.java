@@ -10,9 +10,7 @@ import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.auth.mongo.impl.MongoAuthImpl;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.services.CollectionService;
-import org.uoiu.qieziyin.services.CommandGatewayService;
-import org.uoiu.qieziyin.services.UserService;
+import org.uoiu.qieziyin.services.*;
 
 import java.util.Objects;
 
@@ -61,7 +59,9 @@ public class GatewayServer extends NubesServer {
   private void registerService() {
     nubes.registerService(CommandGatewayService.SERVICE_NAME, new CommandGatewayService());
     nubes.registerService(UserService.SERVICE_NAME, new UserService(mongoService, authProvider));
+    nubes.registerService(ProfileService.SERVICE_NAME, new ProfileService(mongoService));
     nubes.registerService(CollectionService.SERVICE_NAME, new CollectionService(mongoService));
+    nubes.registerService(ImpressionService.SERVICE_NAME, new ImpressionService(mongoService));
   }
 
 }
