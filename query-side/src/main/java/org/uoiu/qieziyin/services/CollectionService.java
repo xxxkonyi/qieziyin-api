@@ -9,7 +9,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
-import org.uoiu.qieziyin.events.CollectionEventType;
+import org.uoiu.qieziyin.api.CollectionEventType;
 import org.uoiu.qieziyin.schemas.CollectionSchemaType;
 
 import java.util.Objects;
@@ -41,8 +41,8 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
     future.complete();
   }
 
-  @Consumer(CollectionEventType.COLLECTION_CREATED)
-  public void created(Message<JsonObject> eventMessage) {
+  @Consumer(CollectionEventType.CREATE_COLLECTION)
+  public void create(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
     JsonObject collection = payload.copy();
@@ -55,18 +55,18 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
 
     mongoService.insert(CollectionSchemaType.COLLECTION_NAME, collection, result -> {
       if (result.succeeded()) {
-        log.debug("created handle succeeded");
-        eventMessage.reply(collection.getString(CollectionSchemaType._id));
+        log.debug("create handle succeeded");
+        eventMessage.reply(result.result());
       } else {
-        log.error("created handle failed:{}", result.cause().getMessage());
+        log.error("create handle failed:{}", result.cause().getMessage());
         eventMessage.fail(500, result.cause().getMessage());
       }
     });
 
   }
 
-  @Consumer(CollectionEventType.COLLECTION_CHANGED)
-  public void changed(Message<JsonObject> eventMessage) {
+  @Consumer(CollectionEventType.CHANGE_COLLECTION)
+  public void change(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
     String collectionId = payload.getString(CollectionSchemaType._id);
@@ -77,18 +77,18 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
 
     mongoService.updateCollection(CollectionSchemaType.COLLECTION_NAME, query, update, result -> {
       if (result.succeeded()) {
-        log.debug("changed handle succeeded");
-        eventMessage.reply(collectionId);
+        log.debug("change handle succeeded");
+        eventMessage.reply(null);
       } else {
-        log.error("changed handle failed:{}", result.cause().getMessage());
+        log.error("change handle failed:{}", result.cause().getMessage());
         eventMessage.fail(500, result.cause().getMessage());
       }
     });
 
   }
 
-  @Consumer(CollectionEventType.COLLECTION_DELETED)
-  public void deleted(Message<JsonObject> eventMessage) {
+  @Consumer(CollectionEventType.DELETE_COLLECTION)
+  public void delete(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
     String collectionId = payload.getString(CollectionSchemaType._id);
@@ -97,10 +97,70 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
 
     mongoService.removeDocument(CollectionSchemaType.COLLECTION_NAME, query, result -> {
       if (result.succeeded()) {
-        log.debug("deleted handle succeeded");
-        eventMessage.reply(collectionId);
+        log.debug("delete handle succeeded");
+        eventMessage.reply(null);
       } else {
-        log.error("deleted handle failed:{}", result.cause().getMessage());
+        log.error("delete handle failed:{}", result.cause().getMessage());
+        eventMessage.fail(500, result.cause().getMessage());
+      }
+    });
+
+  }
+
+  @Consumer(CollectionEventType.YOURS_COLLECTION)
+  public void yours(Message<JsonObject> eventMessage) {
+    String currentUserId = eventMessage.headers().get("currentUserId");
+    JsonObject payload = eventMessage.body();
+
+    String creatorId = payload.getString(CollectionSchemaType.creatorId);
+
+    JsonObject query = new JsonObject().put(CollectionSchemaType.creatorId, creatorId);
+    if (Objects.nonNull(currentUserId)) {
+      if (!Objects.equals(creatorId, currentUserId)) {
+        query.put(CollectionSchemaType.publicType, CollectionSchemaType.COLLECTION_PUBLIC_TYPE_PUBLIC);
+      }
+    }
+
+    mongoService.find(CollectionSchemaType.COLLECTION_NAME, query, result -> {
+      if (result.succeeded()) {
+        log.debug("yours handle succeeded");
+        eventMessage.reply(result.result());
+      } else {
+        log.error("yours handle failed:{}", result.cause().getMessage());
+        eventMessage.fail(500, result.cause().getMessage());
+      }
+    });
+
+  }
+
+  @Consumer(CollectionEventType.ONE_COLLECTION)
+  public void one(Message<JsonObject> eventMessage) {
+    String currentUserId = eventMessage.headers().get("currentUserId");
+    JsonObject payload = eventMessage.body();
+
+    String profileId = payload.getString(CollectionSchemaType._id);
+
+    JsonObject fields = Objects.isNull(payload) && payload.size() == 0 ? null : payload.copy();
+    JsonObject query = new JsonObject().put(CollectionSchemaType._id, profileId);
+
+    mongoService.findOne(CollectionSchemaType.COLLECTION_NAME, query, fields, result -> {
+      if (result.succeeded()) {
+        JsonObject collection = result.result();
+        if (Objects.nonNull(collection) && Objects.nonNull(currentUserId)) {
+          String creatorId = collection.getString(CollectionSchemaType.creatorId);
+          if (!Objects.equals(creatorId, currentUserId)) {
+            if (Objects.equals(collection.getString(CollectionSchemaType.publicType),
+              CollectionSchemaType.COLLECTION_PUBLIC_TYPE_PRIVATE)) {
+              log.debug("one handle succeeded private");
+              eventMessage.fail(400, "私有印集不能访问");
+            }
+          }
+        }
+
+        log.debug("one handle succeeded");
+        eventMessage.reply(collection);
+      } else {
+        log.error("one handle failed:{}", result.cause().getMessage());
         eventMessage.fail(500, result.cause().getMessage());
       }
     });

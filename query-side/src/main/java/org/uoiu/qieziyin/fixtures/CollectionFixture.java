@@ -12,7 +12,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.events.CollectionEventType;
+import org.uoiu.qieziyin.api.CollectionEventType;
 import org.uoiu.qieziyin.schemas.CollectionSchemaType;
 import org.uoiu.qieziyin.services.CollectionService;
 
@@ -146,7 +146,7 @@ public class CollectionFixture implements Fixture {
       result -> {
         if (result.succeeded()) {
           if (result.result() == null) {
-            vertx.eventBus().send(CollectionEventType.COLLECTION_CREATED, collection, future.completer());
+            vertx.eventBus().send(CollectionEventType.CREATE_COLLECTION, collection, future.completer());
           } else {
             future.complete();
           }

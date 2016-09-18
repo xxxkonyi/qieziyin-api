@@ -15,7 +15,7 @@ import io.vertx.ext.auth.mongo.impl.DefaultHashStrategy;
 import io.vertx.ext.auth.mongo.impl.MongoUser;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
-import org.uoiu.qieziyin.events.UserEventType;
+import org.uoiu.qieziyin.api.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
 
@@ -50,8 +50,8 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
     future.complete();
   }
 
-  @Consumer(UserEventType.USER_CREATED)
-  public void createUser(Message<JsonObject> eventMessage) {
+  @Consumer(UserEventType.CREATE_USER)
+  public void create(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
     String userId = ObjectId.get().toHexString();
@@ -76,8 +76,10 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .setHandler(result -> {
         if (result.succeeded()) {
           log.debug("over succeeded");
+          eventMessage.reply(null);
         } else {
           log.error("over failed:{}", result.cause().getMessage());
+          eventMessage.fail(500, result.cause().getMessage());
         }
       })
     ;

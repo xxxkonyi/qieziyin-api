@@ -13,7 +13,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.mongo.MongoClient;
 import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.events.UserEventType;
+import org.uoiu.qieziyin.api.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
 import org.uoiu.qieziyin.services.UserService;
@@ -114,11 +114,11 @@ public class UserFixture implements Fixture {
     Future<Message<String>> future = Future.future();
     mongoService.findOne(UserSchemaType.COLLECTION_NAME,
       new JsonObject().put(UserSchemaType.username, username),
-      new JsonObject().put(UserSchemaType.username, Constants.EMPTY_STRING),
+      new JsonObject().put(UserSchemaType.username, true),
       result -> {
         if (result.succeeded()) {
           if (result.result() == null) {
-            vertx.eventBus().send(UserEventType.USER_CREATED, user, future.completer());
+            vertx.eventBus().send(UserEventType.CREATE_USER, user, future.completer());
           } else {
             future.complete();
           }

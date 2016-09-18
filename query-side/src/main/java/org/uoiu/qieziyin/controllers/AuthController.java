@@ -104,8 +104,8 @@ public class AuthController {
 
   @GET("/current")
   @Auth(authority = Constants.Role.USER, method = AuthMethod.JWT)
-  public void getApi(@User JWTUser user,
-                     Payload<JsonObject> payload, RoutingContext context) {
+  public void current(@User JWTUser user,
+                      Payload<JsonObject> payload, RoutingContext context) {
     String userId = user.principal().getString("sub");
     mongoService.findOne(ProfileSchemaType.COLLECTION_NAME,
       new JsonObject().put(ProfileSchemaType._id, userId),
