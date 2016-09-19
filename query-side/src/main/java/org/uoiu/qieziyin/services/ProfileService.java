@@ -72,7 +72,7 @@ public class ProfileService implements com.github.aesteve.vertx.nubes.services.S
 
     String profileId = payload.getString(ProfileSchemaType._id);
 
-    JsonObject fields = Objects.isNull(payload) && payload.size() == 0 ? null : payload.copy();
+    JsonObject fields = Objects.isNull(payload.getJsonObject("fields")) ? null : payload.copy();
     JsonObject query = new JsonObject().put(ProfileSchemaType._id, profileId);
 
     mongoService.findOne(ProfileSchemaType.COLLECTION_NAME, query, fields, result -> {

@@ -7,6 +7,7 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.api.CollectionEventType;
@@ -121,10 +122,12 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
       }
     }
 
-    mongoService.find(CollectionSchemaType.COLLECTION_NAME, query, result -> {
+    FindOptions options = new FindOptions(payload.getJsonObject("options"));
+
+    mongoService.findWithOptions(CollectionSchemaType.COLLECTION_NAME, query, options, result -> {
       if (result.succeeded()) {
         log.debug("yours handle succeeded");
-        eventMessage.reply(result.result());
+        eventMessage.reply(new JsonObject().put("content", result.result()));
       } else {
         log.error("yours handle failed:{}", result.cause().getMessage());
         eventMessage.fail(500, result.cause().getMessage());
@@ -140,7 +143,7 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
 
     String profileId = payload.getString(CollectionSchemaType._id);
 
-    JsonObject fields = Objects.isNull(payload) && payload.size() == 0 ? null : payload.copy();
+    JsonObject fields = Objects.isNull(payload.getJsonObject("fields")) ? null : payload.copy();
     JsonObject query = new JsonObject().put(CollectionSchemaType._id, profileId);
 
     mongoService.findOne(CollectionSchemaType.COLLECTION_NAME, query, fields, result -> {

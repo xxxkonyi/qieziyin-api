@@ -19,6 +19,8 @@ import org.uoiu.qieziyin.api.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
 
+import java.time.Instant;
+
 public class UserService implements com.github.aesteve.vertx.nubes.services.Service {
   private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
@@ -54,7 +56,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
   public void create(Message<JsonObject> eventMessage) {
     JsonObject payload = eventMessage.body();
 
-    String userId = ObjectId.get().toHexString();
+    String userId = payload.getString(UserSchemaType._id, ObjectId.get().toHexString());
     String username = payload.getString(UserSchemaType.username);
 
     Future<Void> startFuture = Future.future();
@@ -98,6 +100,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .put(UserSchemaType.roles, payload.getJsonArray(UserSchemaType.roles))
       .put(UserSchemaType.permissions, payload.getJsonArray(UserSchemaType.permissions))
       .put(UserSchemaType._id, userId);
+    principal.put(UserSchemaType.createdAt, payload.getInstant(UserSchemaType.createdAt, Instant.now()));
 
     MongoUser user = new MongoUser(principal, authProvider);
 
@@ -117,6 +120,7 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .put(ProfileSchemaType.name, payload.getString(ProfileSchemaType.name))
       .put(ProfileSchemaType.bio, payload.getString(ProfileSchemaType.bio))
       .put(ProfileSchemaType._id, userId);
+    profile.put(ProfileSchemaType.createdAt, payload.getInstant(ProfileSchemaType.createdAt, Instant.now()));
 
     mongoService.insert(ProfileSchemaType.COLLECTION_NAME, profile, resultHandler);
   }

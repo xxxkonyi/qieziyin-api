@@ -7,6 +7,7 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.api.ImpressionEventType;
@@ -156,13 +157,14 @@ public class ImpressionService implements com.github.aesteve.vertx.nubes.service
 
         Future<List<JsonObject>> future = Future.future();
         JsonObject query = new JsonObject().put(ImpressionSchemaType.collectionId, collectionId);
-        mongoService.find(ImpressionSchemaType.COLLECTION_NAME, query, future.completer());
+        FindOptions options = new FindOptions(payload.getJsonObject("options"));
+        mongoService.findWithOptions(ImpressionSchemaType.COLLECTION_NAME, query, options, future.completer());
         return future;
       })
       .setHandler(result -> {
         if (result.succeeded()) {
           log.debug("over succeeded");
-          eventMessage.reply(result.result());
+          eventMessage.reply(new JsonObject().put("content", result.result()));
         } else {
           log.error("over failed:{}", result.cause().getMessage());
           eventMessage.fail(500, result.cause().getMessage());

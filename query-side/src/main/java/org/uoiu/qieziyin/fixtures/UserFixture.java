@@ -2,31 +2,19 @@ package org.uoiu.qieziyin.fixtures;
 
 import com.github.aesteve.vertx.nubes.annotations.services.Service;
 import com.github.aesteve.vertx.nubes.fixtures.Fixture;
-import com.google.common.collect.Lists;
-import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.Message;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import io.vertx.ext.mongo.MongoClient;
-import org.uoiu.qieziyin.common.Constants;
-import org.uoiu.qieziyin.api.UserEventType;
-import org.uoiu.qieziyin.schemas.ProfileSchemaType;
-import org.uoiu.qieziyin.schemas.UserSchemaType;
-import org.uoiu.qieziyin.services.UserService;
+import org.uoiu.qieziyin.init.services.UserInitService;
 
-import java.util.List;
+import java.util.Objects;
 
 public class UserFixture implements Fixture {
   private static final Logger log = LoggerFactory.getLogger(UserFixture.class);
 
-  @Service(Constants.MONGO_SERVICE_NAME)
-  private MongoClient mongoService;
-  @Service(UserService.SERVICE_NAME)
-  private UserService userService;
+  @Service(UserInitService.SERVICE_NAME)
+  private UserInitService userInitService;
 
   private Vertx vertx;
 
@@ -40,7 +28,11 @@ public class UserFixture implements Fixture {
     log.info("start");
     this.vertx = vertx;
 
-    CompositeFuture.all(Lists.newArrayList(initTestUsers())).setHandler(result -> {
+    if (Objects.isNull(userInitService)) {
+      future.complete();
+    }
+
+    userInitService.initTestUsers(result -> {
       if (result.succeeded()) {
         future.complete();
       } else {
@@ -54,79 +46,5 @@ public class UserFixture implements Fixture {
     future.complete();
   }
 
-  private List<Future<Void>> initTestUsers() {
-    log.info("initTestUsers");
-//    mongoService.dropCollection(UserSchemaType.COLLECTION_NAME, handler -> {
-//    });
-//    mongoService.dropCollection(ProfileSchemaType.COLLECTION_NAME, handler -> {
-//    });
-
-    List<JsonObject> users = createUserList();
-    List<Future<Void>> futures = Lists.newArrayListWithCapacity(users.size());
-
-    for (int i = 0; i < users.size(); i++) {
-      futures.add(initUser(users.get(i)));
-    }
-
-    return futures;
-  }
-
-  private List<JsonObject> createUserList() {
-    List<JsonObject> users = Lists.newArrayList();
-    users.add(new JsonObject()
-      .put(UserSchemaType.username, "yuanfang")
-      .put(UserSchemaType.password, "123")
-      .put(UserSchemaType.roles, new JsonArray().add(Constants.Role.USER))
-      .put(ProfileSchemaType.name, "元芳")
-    );
-    users.add(new JsonObject()
-      .put(UserSchemaType.username, "xuzu")
-      .put(UserSchemaType.password, "123")
-      .put(UserSchemaType.roles, new JsonArray().add(Constants.Role.USER))
-      .put(ProfileSchemaType.name, "虚竹")
-    );
-    users.add(new JsonObject()
-      .put(UserSchemaType.username, "xiaobao")
-      .put(UserSchemaType.password, "123")
-      .put(UserSchemaType.roles, new JsonArray().add(Constants.Role.USER))
-      .put(ProfileSchemaType.name, "小宝")
-    );
-    users.add(new JsonObject()
-      .put(UserSchemaType.username, "daqiao")
-      .put(UserSchemaType.password, "123")
-      .put(UserSchemaType.roles, new JsonArray().add(Constants.Role.USER))
-      .put(ProfileSchemaType.name, "大乔")
-    );
-
-    users.add(new JsonObject()
-      .put(UserSchemaType.username, "bangzhu")
-      .put(UserSchemaType.password, "sa")
-      .put(ProfileSchemaType.name, "帮主")
-      .put(ProfileSchemaType.bio, "盖世 帮主")
-      .put(UserSchemaType.roles, new JsonArray().add(Constants.Role.USER).add(Constants.Role.ADMIN))
-    );
-    return users;
-  }
-
-  private Future initUser(JsonObject user) {
-    String username = user.getString(UserSchemaType.username);
-
-    Future<Message<String>> future = Future.future();
-    mongoService.findOne(UserSchemaType.COLLECTION_NAME,
-      new JsonObject().put(UserSchemaType.username, username),
-      new JsonObject().put(UserSchemaType.username, true),
-      result -> {
-        if (result.succeeded()) {
-          if (result.result() == null) {
-            vertx.eventBus().send(UserEventType.CREATE_USER, user, future.completer());
-          } else {
-            future.complete();
-          }
-        } else {
-          future.fail(result.cause());
-        }
-      });
-    return future;
-  }
 
 }
