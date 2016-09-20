@@ -7,11 +7,11 @@ VOLUME /tmp
 ADD / /tmp/build
 
 #构建应用
-RUN cd /tmp/build && gradle shadowJar \
-        #拷贝编译结果到指定目录
-        && mv query-side/build//libs/*.jar /app.jar \
-        #清理编译痕迹
-        && cd / && rm -rf /tmp/build
+RUN cd /tmp/build && gradle shadowJar
+#拷贝编译结果到指定目录
+RUN mv query-side/build/libs/*.jar /app.jar
+#清理编译痕迹
+RUN cd / && rm -rf /tmp/build
 
 EXPOSE 8000
 
