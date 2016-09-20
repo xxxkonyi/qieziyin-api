@@ -1,5 +1,5 @@
 # Use this image as a base
-FROM 18581865951/docker-gradle
+FROM frekele/gradle:2.14.1-jdk8u92
 MAINTAINER konyi <xxxkonyi@gmail.com>
 
 VOLUME /tmp
