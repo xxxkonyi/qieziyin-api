@@ -7,6 +7,7 @@ public abstract class ProfileSchemaType extends SchemaType {
   public static final String COLLECTION_NAME = MongoAuth.DEFAULT_COLLECTION_NAME + "Profile";
 
   public static final String name = "name";
+  public static final String avatar = "avatar";
   public static final String bio = "bio";
 
 }

@@ -1,7 +1,9 @@
 package org.uoiu.qieziyin;
 
 import com.github.aesteve.vertx.nubes.NubesServer;
+import com.google.common.collect.Sets;
 import io.vertx.core.Future;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -9,6 +11,7 @@ import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.auth.mongo.impl.MongoAuthImpl;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.ext.web.handler.CorsHandler;
 import org.uoiu.qieziyin.common.Constants;
 import org.uoiu.qieziyin.init.services.CollectionInitService;
 import org.uoiu.qieziyin.init.services.UserInitService;
@@ -54,6 +57,9 @@ public class GatewayServer extends NubesServer {
     nubes.setAuthProvider(jwtAuth);
 
     registerService();
+
+    nubes.addGlobalHandler(CorsHandler.create("*")
+      .allowedMethods(Sets.newHashSet(HttpMethod.POST, HttpMethod.GET)));
 
     super.start(future);
   }
