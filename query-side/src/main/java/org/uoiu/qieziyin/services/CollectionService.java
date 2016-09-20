@@ -12,7 +12,9 @@ import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.api.CollectionEventType;
 import org.uoiu.qieziyin.schemas.CollectionSchemaType;
+import org.uoiu.qieziyin.schemas.SchemaType;
 
+import java.time.Instant;
 import java.util.Objects;
 
 public class CollectionService implements com.github.aesteve.vertx.nubes.services.Service {
@@ -52,6 +54,8 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
       collection.put(CollectionSchemaType._id, collectionId);
     }
 //    collection.put(CollectionSchemaType.eventDate, new JsonObject().put("$date", payload.getInstant(CollectionSchemaType.eventDate)));
+    collection.put(SchemaType.createdAt, payload.getInstant(SchemaType.createdAt, Instant.now()));
+    collection.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
 
     mongoService.insert(CollectionSchemaType.COLLECTION_NAME, collection, result -> {
@@ -72,6 +76,7 @@ public class CollectionService implements com.github.aesteve.vertx.nubes.service
 
     String collectionId = payload.getString(CollectionSchemaType._id);
     JsonObject collection = payload.copy();
+    collection.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
     JsonObject query = new JsonObject().put(CollectionSchemaType._id, collectionId);
     JsonObject update = new JsonObject().put("$set", collection);

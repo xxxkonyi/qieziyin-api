@@ -17,6 +17,7 @@ import io.vertx.ext.mongo.MongoClient;
 import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.api.UserEventType;
 import org.uoiu.qieziyin.schemas.ProfileSchemaType;
+import org.uoiu.qieziyin.schemas.SchemaType;
 import org.uoiu.qieziyin.schemas.UserSchemaType;
 
 import java.time.Instant;
@@ -100,7 +101,8 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .put(UserSchemaType.roles, payload.getJsonArray(UserSchemaType.roles))
       .put(UserSchemaType.permissions, payload.getJsonArray(UserSchemaType.permissions))
       .put(UserSchemaType._id, userId);
-    principal.put(UserSchemaType.createdAt, payload.getInstant(UserSchemaType.createdAt, Instant.now()));
+    principal.put(SchemaType.createdAt, payload.getInstant(SchemaType.createdAt, Instant.now()));
+    principal.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
     MongoUser user = new MongoUser(principal, authProvider);
 
@@ -120,7 +122,8 @@ public class UserService implements com.github.aesteve.vertx.nubes.services.Serv
       .put(ProfileSchemaType.name, payload.getString(ProfileSchemaType.name))
       .put(ProfileSchemaType.bio, payload.getString(ProfileSchemaType.bio))
       .put(ProfileSchemaType._id, userId);
-    profile.put(ProfileSchemaType.createdAt, payload.getInstant(ProfileSchemaType.createdAt, Instant.now()));
+    profile.put(SchemaType.createdAt, payload.getInstant(SchemaType.createdAt, Instant.now()));
+    profile.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
     mongoService.insert(ProfileSchemaType.COLLECTION_NAME, profile, resultHandler);
   }

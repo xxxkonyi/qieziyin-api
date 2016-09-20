@@ -81,8 +81,8 @@ public class CollectionInitService implements com.github.aesteve.vertx.nubes.ser
     for (int i = 0; i < size; i++) {
       collections.add(new JsonObject()
         .put(ImpressionSchemaType._id, MessageFormat.format("{0}--{1}", creatorId, i))
-        .put(CollectionSchemaType.title, "活动的标题")
-        .put(CollectionSchemaType.description, "这是一段活动的描述")
+        .put(CollectionSchemaType.title, MessageFormat.format("活动[{0}]的标题", i))
+        .put(CollectionSchemaType.description, MessageFormat.format("这是一段活动[{0}]的描述", i))
         .put(CollectionSchemaType.cover, "https://images.unsplash.com/photo-1422651355218-53453822ebb8?dpr=1&auto=compress,format&crop=entropy&fit=max&w=576&q=80&cs=tinysrgb")
         .put(CollectionSchemaType.eventDate, Instant.parse("2016-06-01T10:15:30.00Z").plus(Duration.ofDays(i + 7)))
         .put(CollectionSchemaType.publicType,
@@ -176,8 +176,8 @@ public class CollectionInitService implements com.github.aesteve.vertx.nubes.ser
     for (int i = 0; i < size; i++) {
       impressions.add(new JsonObject()
         .put(ImpressionSchemaType._id, MessageFormat.format("{0}--{1}--{2}", creatorId, collectionId, i))
-        .put(ImpressionSchemaType.title, "发生什么的标题")
-        .put(ImpressionSchemaType.description, "这是一段发生什么的描述")
+        .put(CollectionSchemaType.title, MessageFormat.format("发生[{0}]的标题", i))
+        .put(CollectionSchemaType.description, MessageFormat.format("这是一段发生[{0}]的描述", i))
         .put(ImpressionSchemaType.content, "https://images.unsplash.com/photo-1422651355218-53453822ebb8?dpr=1&auto=compress,format&crop=entropy&fit=max&w=576&q=80&cs=tinysrgb")
         .put(ImpressionSchemaType.eventDate, Instant.parse("2016-06-01T10:15:30.00Z").plus(Duration.ofHours(i + 1)))
         .put(ImpressionSchemaType.creatorId, creatorId)

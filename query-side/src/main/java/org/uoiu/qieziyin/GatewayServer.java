@@ -9,7 +9,6 @@ import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.auth.mongo.MongoAuth;
 import io.vertx.ext.auth.mongo.impl.MongoAuthImpl;
 import io.vertx.ext.mongo.MongoClient;
-import org.apache.commons.lang3.ObjectUtils;
 import org.uoiu.qieziyin.common.Constants;
 import org.uoiu.qieziyin.init.services.CollectionInitService;
 import org.uoiu.qieziyin.init.services.UserInitService;
@@ -66,15 +65,13 @@ public class GatewayServer extends NubesServer {
     nubes.registerService(CollectionService.SERVICE_NAME, new CollectionService(mongoService));
     nubes.registerService(ImpressionService.SERVICE_NAME, new ImpressionService(mongoService));
 
-    boolean initDataEnable = Boolean.valueOf(ObjectUtils.defaultIfNull(System.getenv("INIT_DATA_ENABLE"), "true"));
-    if (initDataEnable) {
-      nubes.registerService(CollectionInitService.SERVICE_NAME, new CollectionInitService(mongoService,
-        (CollectionService) nubes.getService(CollectionService.SERVICE_NAME),
-        (ImpressionService) nubes.getService(ImpressionService.SERVICE_NAME)));
-      nubes.registerService(UserInitService.SERVICE_NAME, new UserInitService(mongoService,
-        (UserService) nubes.getService(UserService.SERVICE_NAME),
-        (CollectionInitService) nubes.getService(CollectionInitService.SERVICE_NAME)));
-    }
+    nubes.registerService(CollectionInitService.SERVICE_NAME, new CollectionInitService(mongoService,
+      (CollectionService) nubes.getService(CollectionService.SERVICE_NAME),
+      (ImpressionService) nubes.getService(ImpressionService.SERVICE_NAME)));
+    nubes.registerService(UserInitService.SERVICE_NAME, new UserInitService(mongoService,
+      (UserService) nubes.getService(UserService.SERVICE_NAME),
+      (CollectionInitService) nubes.getService(CollectionInitService.SERVICE_NAME)));
+
   }
 
 }

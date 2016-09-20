@@ -13,7 +13,9 @@ import org.bson.types.ObjectId;
 import org.uoiu.qieziyin.api.ImpressionEventType;
 import org.uoiu.qieziyin.schemas.CollectionSchemaType;
 import org.uoiu.qieziyin.schemas.ImpressionSchemaType;
+import org.uoiu.qieziyin.schemas.SchemaType;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +56,8 @@ public class ImpressionService implements com.github.aesteve.vertx.nubes.service
       impression.put(ImpressionSchemaType._id, impressionId);
     }
 //    collection.put(ImpressionSchemaType.eventDate, new JsonObject().put("$date", payload.getInstant(ImpressionSchemaType.eventDate)));
+    impression.put(SchemaType.createdAt, payload.getInstant(SchemaType.createdAt, Instant.now()));
+    impression.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
 
     mongoService.insert(ImpressionSchemaType.COLLECTION_NAME, impression, result -> {
@@ -74,6 +78,7 @@ public class ImpressionService implements com.github.aesteve.vertx.nubes.service
 
     String impressionId = payload.getString(ImpressionSchemaType._id);
     JsonObject impression = payload.copy();
+    impression.put(SchemaType.updatedAt, payload.getInstant(SchemaType.updatedAt, Instant.now()));
 
     JsonObject query = new JsonObject().put(ImpressionSchemaType._id, impressionId);
     JsonObject update = new JsonObject().put("$set", impression);

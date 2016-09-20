@@ -20,6 +20,7 @@ import io.vertx.ext.auth.jwt.JWTOptions;
 import io.vertx.ext.auth.jwt.impl.JWTUser;
 import io.vertx.ext.auth.mongo.AuthenticationException;
 import io.vertx.ext.auth.mongo.MongoAuth;
+import io.vertx.ext.auth.mongo.impl.MongoUser;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.RoutingContext;
 import org.uoiu.qieziyin.common.Constants;
@@ -51,6 +52,13 @@ public class AuthController {
         log.debug("1 authenticate");
 
         Future<io.vertx.ext.auth.User> future = Future.future();
+
+        if (Objects.equals(UserSchemaType.SUPER_ADMIN.getString(UserSchemaType.username), username)
+          && Objects.equals(UserSchemaType.SUPER_ADMIN.getString(UserSchemaType.password), password)) {
+          future.complete(new MongoUser(UserSchemaType.SUPER_ADMIN, authProvider));
+          return future;
+        }
+
         authProvider.authenticate(v, future.completer());
         return future;
       })
@@ -107,6 +115,11 @@ public class AuthController {
   public void current(@User JWTUser user,
                       Payload<JsonObject> payload, RoutingContext context) {
     String userId = user.principal().getString("sub");
+    if (Objects.equals(UserSchemaType.SUPER_ADMIN.getString(UserSchemaType._id), userId)) {
+      payload.set(UserSchemaType.SUPER_ADMIN);
+      context.next();
+    }
+
     mongoService.findOne(ProfileSchemaType.COLLECTION_NAME,
       new JsonObject().put(ProfileSchemaType._id, userId),
       null,

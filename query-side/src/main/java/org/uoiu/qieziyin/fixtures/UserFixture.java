@@ -28,17 +28,14 @@ public class UserFixture implements Fixture {
     log.info("start");
     this.vertx = vertx;
 
-    if (Objects.isNull(userInitService)) {
-      future.complete();
-    }
-
-    userInitService.initTestUsers(result -> {
-      if (result.succeeded()) {
-        future.complete();
-      } else {
-        future.fail(result.cause());
-      }
-    });
+//    userInitService.initTestUsers(result -> {
+//      if (result.succeeded()) {
+//        future.complete();
+//      } else {
+//        future.fail(result.cause());
+//      }
+//    });
+    future.complete();
   }
 
   @Override
